@@ -9,7 +9,15 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { AllExceptionsFilter } from './common/exceptions/base.exception.filter';
 import { HttpExceptionFilter } from './common/exceptions/http.exception.filter';
 
+declare const module: any;
+
 async function bootstrap() {
+  // 热重载
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
+
   // 使用Fastify替换框架默认底层的Express
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -30,4 +38,5 @@ async function bootstrap() {
 
   await app.listen(3000);
 }
+
 bootstrap();
