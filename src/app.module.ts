@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { getConfig } from './utils';
+import { CacheModule } from '@nestjs/common/cache';
 
 @Module({
   // 引入配置模块ConfigModule，同时不启用框架默认的env配置文件
@@ -12,6 +13,9 @@ import { getConfig } from './utils';
       ignoreEnvFile: true,
       isGlobal: true, // 全局开启，这样就不需要在每个模块下的Module文件下单独启用
       load: [getConfig],
+    }),
+    CacheModule.register({
+      isGlobal: true,
     }),
     UserModule,
   ],
