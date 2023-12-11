@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/common/cache';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { getConfig } from './utils';
-import { CacheModule } from '@nestjs/common/cache';
 
 @Module({
   // 引入配置模块ConfigModule，同时不启用框架默认的env配置文件
