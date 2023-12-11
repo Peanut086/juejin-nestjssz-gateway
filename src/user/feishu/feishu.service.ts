@@ -9,6 +9,7 @@ import {
 import { Cache } from 'cache-manager';
 import { BusinessException } from '@/common/exceptions/business.exception';
 import { ConfigService } from '@nestjs/config';
+import { messages } from '@/helper/feishu/message';
 
 @Injectable()
 export class FeishuService {
@@ -27,7 +28,8 @@ export class FeishuService {
    * */
   async getAppToken(): Promise<string> {
     let appToken = await this.configService.get(this.APP_TOKEN_CACHE_KEY);
-    if (!appToken) {
+    console.log('Peanut console...😏😣😆😁🤣😂\n', appToken);
+    if (!appToken || appToken === 'APP_TOKEN_CACHE_KEY') {
       const result = await getAppToken();
       if (result.code === 0) {
         appToken = result.app_access_token;
@@ -42,5 +44,14 @@ export class FeishuService {
       }
     }
     return appToken;
+  }
+
+  async sendMessage(receive_id_type, params) {
+    try {
+      const app_token = await this.getAppToken();
+      return messages(receive_id_type, params, app_token as string);
+    } catch (e) {
+      throw new BusinessException(e);
+    }
   }
 }

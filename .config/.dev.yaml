@@ -3,6 +3,6 @@ TEST_VALUE:
 FEISHU_CONFIG:
   FEISHU_URL: https://open.feishu.cn/open-apis
   FEISHU_API_HOST: https://open.feishu.cn
-  FEISHU_APP_ID: xxxxxxxxx
-  FEISHU_APP_SECRET: xxxxxx
+  FEISHU_APP_ID: xxx
+  FEISHU_APP_SECRET: xxxx
 APP_TOKEN_CACHE_KEY: APP_TOKEN_CACHE_KEY
