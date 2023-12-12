@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/common/cache';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   getAppToken,
   getUserAccessToken,
@@ -27,8 +27,10 @@ export class FeishuService {
    * 获取飞书token
    * */
   async getAppToken(): Promise<string> {
-    let appToken = await this.configService.get(this._APP_TOKEN_CACHE_KEY);
-    if (!appToken || appToken === 'APP_TOKEN_CACHE_KEY') {
+    let appToken = await this.cacheManager.get<string>(
+      this._APP_TOKEN_CACHE_KEY,
+    );
+    if (!appToken) {
       const result = await getAppToken();
       if (result.code === 0) {
         appToken = result.app_access_token;
