@@ -9,6 +9,7 @@ export class FeishuController {
   constructor(private readonly feishuService: FeishuService) {}
 
   @Post('sendMessage')
+  @ApiOperation({ summary: '发送飞书消息' })
   sendMessage(@Body() params: FeishuMessageDto) {
     const { receive_id_type, ...rest } = params;
     return this.feishuService.sendMessage(receive_id_type, rest);
