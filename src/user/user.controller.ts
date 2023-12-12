@@ -1,64 +1,18 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Version,
-  VERSION_NEUTRAL,
-} from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { UserService } from '@/user/user.service';
+import { AddUserDto } from '@/user/dto/user.dto';
 
-@Controller({
-  path: 'user',
-  version: '1',
-})
+@ApiTags('用户')
+@Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
-  @Get('getTestName')
-  getTestName() {
-    return this.configService.get('TEST_VALUE').name;
-  }
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @Get('findError')
-  @Version([VERSION_NEUTRAL, '1'])
-  findError() {
-    const a: any = {};
-    console.log(a.b.c);
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @ApiOperation({
+    summary: '新增用户',
+  })
+  @Post('/add')
+  create(@Body() user: AddUserDto) {
+    return this.userService.createOrSave(user);
   }
 }
