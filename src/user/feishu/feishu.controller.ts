@@ -1,15 +1,24 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { FeishuService } from './feishu.service';
+import {
+  Body,
+  Controller,
+  Post,
+  Version,
+  VERSION_NEUTRAL,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { FeishuMessageDto } from '@/user/feishu/dto/FeishuMessageDto';
+import { FeishuService } from './feishu.service';
+import { FeishuMessageDto } from './dto/FeishuMessageDto';
 
 @ApiTags('飞书')
 @Controller('feishu')
 export class FeishuController {
   constructor(private readonly feishuService: FeishuService) {}
 
+  @ApiOperation({
+    summary: '消息推送',
+  })
+  @Version([VERSION_NEUTRAL])
   @Post('sendMessage')
-  @ApiOperation({ summary: '发送飞书消息' })
   sendMessage(@Body() params: FeishuMessageDto) {
     const { receive_id_type, ...rest } = params;
     return this.feishuService.sendMessage(receive_id_type, rest);
