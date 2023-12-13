@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { MongoRepository } from 'typeorm';
-import { User } from '@/user/entities/user.mongo.entity';
+import { Repository } from 'typeorm';
+import { User } from '@/user/user.mysql.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject('USER_REPOSITORY')
-    private userRepository: MongoRepository<User>,
+    private userRepository: Repository<User>,
   ) {}
 
   createOrSave(user) {
