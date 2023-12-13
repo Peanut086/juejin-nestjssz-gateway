@@ -17,12 +17,6 @@ import { generateDocument } from './doc';
 declare const module: any;
 
 async function bootstrap() {
-  // 热重载
-  if (module.hot) {
-    module.hot.accept();
-    module.hot.dispose(() => app.close());
-  }
-
   // 使用Fastify替换框架默认底层的Express
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -46,6 +40,13 @@ async function bootstrap() {
 
   // 生成swagger文档
   generateDocument(app);
+
+  // 热重载
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
+
   await app.listen(3000);
 }
 

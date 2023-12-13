@@ -12,7 +12,7 @@ const MONGO_DATEBASE_CONFIG = {
   entities: [
     path.join(
       __dirname,
-      `../../**/*.${MONGODB_CONFIG.entities}.entity{.ts,.js}`,
+      `dist/../**/*.${MONGODB_CONFIG.entities}.entity{.ts,.js}`,
     ),
   ],
 };
@@ -24,8 +24,13 @@ export const DatabaseProviders = [
   {
     provide: 'MONGODB_DATA_SOURCE',
     useFactory: async () => {
-      await MONGO_DATE_SOURCE.initialize();
-      return MONGO_DATE_SOURCE;
+      try {
+        await MONGO_DATE_SOURCE.initialize();
+        return MONGO_DATE_SOURCE;
+      } catch (err) {
+        console.log('Peanut console...😏😣😆😁🤣😂\n', '数据库连接错误！\n');
+        console.log('Peanut console...😏😣😆😁🤣😂\n', err + '\n');
+      }
     },
   },
 ];
