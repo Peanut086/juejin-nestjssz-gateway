@@ -6,7 +6,7 @@ FEISHU_CONFIG:
   FEISHU_APP_ID: xxx
   FEISHU_APP_SECRET: xxx
 APP_TOKEN_CACHE_KEY: FeiShuToken
-MYSQLDB_CONFIG:
+MYSQL_CONFIG:
   type: mysql                      # 数据库链接类型
   host: "localhost"                 # 数据库链接地址
   port: 3306                         # 数据库链接端口

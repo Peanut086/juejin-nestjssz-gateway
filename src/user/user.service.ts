@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from '@/user/user.mysql.entity';
+import { BusinessException } from '@/common/exceptions/business.exception';
 
 @Injectable()
 export class UserService {
@@ -12,8 +13,8 @@ export class UserService {
   createOrSave(user) {
     try {
       return this.userRepository.save(user);
-    } catch (e) {
-      console.log('Peanut console...😏😣😆😁🤣😂\n', e);
+    } catch (err) {
+      throw new BusinessException(err.message);
     }
   }
 }
