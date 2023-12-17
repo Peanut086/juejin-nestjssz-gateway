@@ -6,6 +6,12 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { getConfig } from './utils';
 import { FeishuModule } from '@/user/feishu/feishu.module';
+import { redisStore } from 'cache-manager-redis-store';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import type { CacheStore } from 'cache-manager-redis-store';
+
+const redisCacheStore: CacheStore = redisStore;
 
 @Module({
   // 引入配置模块ConfigModule，同时不启用框架默认的env配置文件
@@ -17,6 +23,11 @@ import { FeishuModule } from '@/user/feishu/feishu.module';
     }),
     CacheModule.register({
       isGlobal: true,
+      store: redisCacheStore,
+      host: getConfig('REDIS_CONFIG').host,
+      port: getConfig('REDIS_CONFIG').port,
+      auth_pass: getConfig('REDIS_CONFIG').auth,
+      db: getConfig('REDIS_CONFIG').db,
     }),
     UserModule,
     FeishuModule,
