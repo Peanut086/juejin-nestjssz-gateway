@@ -79,7 +79,6 @@ export class LogStream {
       return null;
     }
 
-    console.log(`𝒑𝒆𝒂𝒏𝒖𝒕\n😏😣😆😁🤣😂\n`, data);
     return `${level}--${time}--${logId}--${reqInfo}--${data.msg}`;
   }
 }

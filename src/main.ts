@@ -15,6 +15,7 @@ import { AllExceptionsFilter } from './common/exceptions/base.exception.filter';
 import { HttpExceptionFilter } from './common/exceptions/http.exception.filter';
 import { generateDocument } from './doc';
 import { FastifyLogger } from '@/common/logger';
+import { getConfig } from '@/utils';
 
 declare const module: any;
 
@@ -53,7 +54,8 @@ async function bootstrap() {
     module.hot.dispose(() => app.close());
   }
 
-  await app.listen(3000);
+  const port = getConfig('APPLICATION_CONFIG')['APP_PORT'];
+  await app.listen(port);
 }
 
 bootstrap();

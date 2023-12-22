@@ -9,6 +9,9 @@ export type GetAppTokenRes = {
   expire: number;
 };
 
+/*
+ * 获取飞书用户凭证
+ * */
 export const getUserToken = async ({ code, app_token }) => {
   const { data } = await methodV({
     url: `/authen/v1/access_token`,

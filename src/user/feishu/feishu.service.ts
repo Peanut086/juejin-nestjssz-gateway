@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   getAppToken,
+  GetAppTokenRes,
   getUserAccessToken,
   getUserToken,
   refreshUserToken,
@@ -10,10 +11,14 @@ import { Cache } from 'cache-manager';
 import { BusinessException } from '@/common/exceptions/business.exception';
 import { ConfigService } from '@nestjs/config';
 import { messages } from '@/helper/feishu/message';
+import { GetUserTokenDto } from '@/user/feishu/dto/feishu.getUserToken.dto';
+import { BUSINESS_ERROR_CODE } from '@/common/exceptions/business.error.codes';
 
 @Injectable()
 export class FeishuService {
   private _APP_TOKEN_CACHE_KEY;
+  private _USER_TOEKN_CACHE_KEY;
+  private _USER_REFRESH_TOKEN_CACHE_KEY;
 
   constructor(
     // 方便交互  将该实例注入到缓存管理器
@@ -21,6 +26,10 @@ export class FeishuService {
     private configService: ConfigService,
   ) {
     this._APP_TOKEN_CACHE_KEY = this.configService.get('APP_TOKEN_CACHE_KEY');
+    this._USER_TOEKN_CACHE_KEY = this.configService.get('USER_TOKEN_CACHE_KEY');
+    this._USER_REFRESH_TOKEN_CACHE_KEY = this.configService.get(
+      'USER_REFRESH_TOKEN_CACHE_KEY',
+    );
   }
 
   /*
@@ -45,6 +54,86 @@ export class FeishuService {
       }
     }
     return appToken;
+  }
+
+  /*
+   * 获取飞书用户凭证
+   * */
+  async getUserToken(code: string) {
+    const app_token: GetAppTokenRes = await getAppToken();
+    const dto: GetUserTokenDto = {
+      code,
+      app_token: app_token.app_access_token,
+    };
+    const res = await getUserToken(dto);
+    if (res.code !== 0) {
+      throw new BusinessException(res.message);
+    }
+    return res.data;
+  }
+
+  /*
+   * 缓存飞书用户token
+   * */
+  async setUserCacheToken(tokenInfo: any) {
+    const {
+      refresh_token,
+      access_token,
+      user_id,
+      expires_in,
+      refresh_expires_in,
+    } = tokenInfo;
+
+    // 缓存用户token
+    await this.cacheManager.set(
+      `${this._USER_TOEKN_CACHE_KEY}_${user_id}`,
+      access_token,
+      expires_in - 60,
+    );
+
+    await this.cacheManager.set(
+      `${this._USER_REFRESH_TOKEN_CACHE_KEY}_${user_id}`,
+      refresh_token,
+      refresh_expires_in - 60,
+    );
+  }
+
+  /*
+   * 从缓存获取用户token，如果token失效则通过refresh_token刷新token
+   * */
+  async getCachedUserToken(userId: string) {
+    let userToken = await this.cacheManager.get(
+      `${this._USER_TOEKN_CACHE_KEY}_${userId}`,
+    );
+    if (!userToken) {
+      // 从缓存获取refresh_token
+      const refreshToken: string = await this.cacheManager.get(
+        `${this._USER_REFRESH_TOKEN_CACHE_KEY}_${userId}`,
+      );
+      if (!refreshToken) {
+        throw new BusinessException({
+          code: BUSINESS_ERROR_CODE.TOKEN_INVALID,
+          message: '飞书token 已失效！',
+        });
+      }
+      // 获取新的token
+      const newUserTokenInfo = await this.getUserTokenByRefreshToken(
+        refreshToken,
+      );
+      await this.setUserCacheToken(newUserTokenInfo);
+      userToken = newUserTokenInfo.access_token;
+    }
+    return userToken;
+  }
+
+  /*
+   * 根据refreshToken获取token
+   * */
+  async getUserTokenByRefreshToken(refreshToken: string) {
+    return refreshUserToken({
+      refreshToken,
+      app_token: await this.getAppToken(),
+    });
   }
 
   async sendMessage(receive_id_type, params) {
