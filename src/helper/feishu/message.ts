@@ -32,8 +32,7 @@ export const messages = async (
   params: MESSAGES_PARAMS,
   app_token: string,
 ) => {
-  console.log(receive_id_type, params, app_token);
-
+  // 如果消息失败   需要检查开发者后台ip白名单
   const { data } = await methodV({
     url: `/im/v1/messages`,
     method: 'POST',
