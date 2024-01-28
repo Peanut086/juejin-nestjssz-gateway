@@ -16,15 +16,23 @@ import { RedisStore, redisStore } from 'cache-manager-redis-store';
       isGlobal: true, // 全局开启，这样就不需要在每个模块下的Module文件下单独启用
       load: [getConfig],
     }),
-    CacheModule.register({
+    CacheModule.registerAsync({
       isGlobal: true,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      store: redisStore as unknown as RedisStore,
-      host: getConfig('REDIS_CONFIG').host,
-      port: getConfig('REDIS_CONFIG').port,
-      auth_pass: getConfig('REDIS_CONFIG').auth,
-      db: getConfig('REDIS_CONFIG').db,
+      useFactory: () => {
+        const store = redisStore({
+          socket: {
+            host: getConfig('REDIS_CONFIG').host,
+            port: +getConfig('REDIS_CONFIG').port,
+          },
+          password: getConfig('REDIS_CONFIG').password,
+        });
+        return {
+          store,
+          ttl: 60 * 60 * 24 * 7,
+        };
+      },
     }),
     UserModule,
     FeishuModule,

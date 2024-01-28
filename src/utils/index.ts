@@ -18,7 +18,6 @@ export const getConfig = (type?: string) => {
     const yamlPath = path.join(process.cwd(), `./.config/.${envTag}.yaml`);
     const file = fs.readFileSync(yamlPath, 'utf-8');
     const config = parse(file);
-    console.log('当前运行环境：', envTag + '\n');
     if (type) {
       return config[type];
     }
