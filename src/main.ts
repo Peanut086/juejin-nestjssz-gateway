@@ -15,6 +15,7 @@ import { AllExceptionsFilter } from './common/exceptions/base.exception.filter';
 import { HttpExceptionFilter } from './common/exceptions/http.exception.filter';
 import { generateDocument } from './doc';
 import { FastifyLogger } from '@/common/logger';
+import fastifyCookie from '@fastify/cookie';
 import { getConfig } from '@/utils';
 
 declare const module: any;
@@ -44,6 +45,10 @@ async function bootstrap() {
 
   // 启用全局字段校验
   app.useGlobalPipes(new ValidationPipe());
+
+  app.register(fastifyCookie, {
+    secret: getConfig('APPLICATION_CONFIG')['APP_SECRET'],
+  });
 
   // 生成swagger文档
   generateDocument(app);

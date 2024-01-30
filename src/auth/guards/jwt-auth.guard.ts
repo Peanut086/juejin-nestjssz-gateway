@@ -4,7 +4,7 @@ import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { BusinessException } from '@/common/exceptions/business.exception';
 import { BUSINESS_ERROR_CODE } from '@/common/exceptions/business.error.codes';
-import { IS_PUBLIC_KEY } from '@/constants';
+import { IS_PUBLIC_KEY } from '@/auth/constants';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {

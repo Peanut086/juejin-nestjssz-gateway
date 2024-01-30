@@ -42,6 +42,7 @@
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.10",
     "fast-json-parse": "^1.0.3",
+    "mkdirp": "^3.0.1",
     "mongoose": "^8.0.3",
     "mysql2": "^3.6.5",
     "passport": "^0.7.0",

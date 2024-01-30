@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { FastifyRequest } from 'fastify';
 import { Strategy } from 'passport';
-import { jwtConstants } from '@/constants';
+import { jwtConstants } from '@/auth/constants';
 
 type FgRequest = FastifyRequest & { cookies: { jwt: string } };
 
@@ -15,7 +15,7 @@ const cookieExtractor = (req: FgRequest) => {
 };
 
 @Injectable()
-export class JwtAuthStrategy extends PassportStrategy(Strategy) {
+export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
       jwtFromRequest: cookieExtractor,
