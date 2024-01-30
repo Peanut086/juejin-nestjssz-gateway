@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { getConfig } from './utils';
 import { FeishuModule } from '@/user/feishu/feishu.module';
-import { RedisStore, redisStore } from 'cache-manager-redis-store';
+import { redisStore } from 'cache-manager-redis-store';
 
 @Module({
   // 引入配置模块ConfigModule，同时不启用框架默认的env配置文件
@@ -18,19 +18,17 @@ import { RedisStore, redisStore } from 'cache-manager-redis-store';
     }),
     CacheModule.registerAsync({
       isGlobal: true,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      useFactory: () => {
-        const store = redisStore({
+      useFactory: async () => {
+        const store = await redisStore({
           socket: {
             host: getConfig('REDIS_CONFIG').host,
-            port: +getConfig('REDIS_CONFIG').port,
+            port: getConfig('REDIS_CONFIG').port,
           },
+          database: getConfig('REDIS_CONFIG').db,
           password: getConfig('REDIS_CONFIG').password,
-        });
+        } as any);
         return {
-          store,
-          ttl: 60 * 60 * 24 * 7,
+          store: store as any,
         };
       },
     }),
