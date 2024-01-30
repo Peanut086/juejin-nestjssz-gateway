@@ -15,6 +15,9 @@ import { GetUserTokenDto } from '@/user/feishu/dto/feishu.getUserToken.dto';
 export class FeishuController {
   constructor(private readonly feishuService: FeishuService) {}
 
+  /*
+   * 如果出现400，可能是需要到后台调试界面手动刷新token
+   * */
   @ApiOperation({
     summary: '消息推送',
   })
