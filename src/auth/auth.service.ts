@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@/user/user.service';
 import { FeishuService } from '@/user/feishu/feishu.service';
 import { User } from '@/user/user.mysql.entity';
+import { BusinessException } from '@/common/exceptions/business.exception';
 
 @Injectable()
 export class AuthService {
@@ -17,16 +18,22 @@ export class AuthService {
    * */
   async validateFeishuUser(code: string) {
     const feishuInfo = await this.getFeishuUserInfoByCode(code);
-    // 同步到数据库
-    const user: User = await this.userService.createOrSaveByFeishu(feishuInfo);
-    return {
-      userId: user.id,
-      username: user.username,
-      name: user.name,
-      email: user.email,
-      feishuAccessToken: feishuInfo.accessToken,
-      feishuUserId: feishuInfo.feishuUserId,
-    };
+    if (feishuInfo) {
+      // 同步到数据库
+      const user: User = await this.userService.createOrSaveByFeishu(
+        feishuInfo,
+      );
+      return {
+        userId: user.id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        feishuAccessToken: feishuInfo.accessToken,
+        feishuUserId: feishuInfo.feishuUserId,
+      };
+    } else {
+      return null;
+    }
   }
 
   /*
@@ -42,20 +49,26 @@ export class AuthService {
    * 获取飞书用户信息
    * */
   async getFeishuUserInfoByCode(code: string) {
-    const { data } = await this.feishuService.getUserToken(code);
-    const feishuInfo = {
-      accessToken: data.access_token,
-      avatarBig: data.avatar_big,
-      avatarMiddle: data.avatar_middle,
-      avatarThumb: data.avatar_thumb,
-      avatarUrl: data.avatar_url,
-      email: data.email,
-      enName: data.en_name,
-      mobile: data.mobile,
-      name: data.name,
-      feishuUnionId: data.union_id,
-      feishuUserId: data.user_id,
-    };
-    return feishuInfo;
+    try {
+      const res = await this.feishuService.getUserToken(code);
+
+      if (res) {
+        return {
+          accessToken: res.access_token,
+          avatarBig: res.avatar_big,
+          avatarMiddle: res.avatar_middle,
+          avatarThumb: res.avatar_thumb,
+          avatarUrl: res.avatar_url,
+          email: res.email,
+          enName: res.en_name,
+          mobile: res.mobile,
+          name: res.name,
+          feishuUnionId: res.union_id,
+          feishuUserId: res.user_id,
+        };
+      }
+    } catch (e) {
+      throw new BusinessException(e.message);
+    }
   }
 }

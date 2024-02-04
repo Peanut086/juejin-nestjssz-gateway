@@ -60,16 +60,22 @@ export class FeishuService {
    * 获取飞书用户凭证
    * */
   async getUserToken(code: string) {
-    const app_token: GetAppTokenRes = await getAppToken();
-    const dto: GetUserTokenDto = {
-      code,
-      app_token: app_token.app_access_token,
-    };
-    const res = await getUserToken(dto);
-    if (res.code !== 0) {
-      throw new BusinessException(res.message);
+    try {
+      const app_token: GetAppTokenRes = await getAppToken();
+      const dto: GetUserTokenDto = {
+        code,
+        app_token: app_token.app_access_token,
+      };
+      const res = await getUserToken(dto);
+      if (res.code === 0) {
+        return res.data;
+      }
+      if (res.code === 20001) {
+        throw new BusinessException('用户信息获取失败：' + res.msg);
+      }
+    } catch (error) {
+      throw new BusinessException(error.message);
     }
-    return res.data;
   }
 
   /*

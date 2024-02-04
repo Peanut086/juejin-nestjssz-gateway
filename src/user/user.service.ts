@@ -29,8 +29,17 @@ export class UserService {
         where: { feishuUserId },
       });
       if (user) {
+        // 删除accessToken
+        delete feishuUser.accessToken;
         // 更新
-        return this.userRepository.update(user.id, feishuUser);
+        const updateRes = await this.userRepository.update(user.id, feishuUser);
+        if (updateRes.affected) {
+          return await this.userRepository.findOne({
+            where: { id: user.id },
+          });
+        } else {
+          throw new BusinessException('用户：' + user.name + '信息更新失败！');
+        }
       }
       return this.userRepository.save(feishuUser);
     } catch (err) {

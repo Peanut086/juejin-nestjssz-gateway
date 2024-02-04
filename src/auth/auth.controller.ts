@@ -30,7 +30,7 @@ export class AuthController {
   @UseGuards(FeiShuAuthGuard)
   @Public()
   @Get('/feishu/auth2')
-  async getFeishuTokenByApplications(
+  async getFeiShuTokenByApplications(
     @PayloadUser() user: Payload,
     @Res({ passthrough: true }) response: FastifyReply,
     @Query() query: GetTokenByApplications,

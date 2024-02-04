@@ -46,7 +46,7 @@ async function bootstrap() {
   // 启用全局字段校验
   app.useGlobalPipes(new ValidationPipe());
 
-  app.register(fastifyCookie, {
+  await app.register(fastifyCookie, {
     secret: getConfig('APPLICATION_CONFIG')['APP_SECRET'],
   });
 

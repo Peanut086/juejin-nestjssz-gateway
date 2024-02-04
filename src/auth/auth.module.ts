@@ -6,7 +6,7 @@ import { jwtConstants } from './constants';
 import { AuthController } from '@/auth/auth.controller';
 import { AuthService } from '@/auth/auth.service';
 import { JwtAuthStrategy } from '@/auth/strategies/jwt-auth.strategy';
-import { FeishuStrategy } from '@/auth/strategies/feishu-auth.strategy';
+import { FeiShuStrategy } from '@/auth/strategies/feishu-auth.strategy';
 import { FeishuService } from '@/user/feishu/feishu.service';
 
 @Module({
@@ -21,7 +21,7 @@ import { FeishuService } from '@/user/feishu/feishu.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, FeishuService, JwtAuthStrategy, FeishuStrategy],
+  providers: [AuthService, FeishuService, JwtAuthStrategy, FeiShuStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
